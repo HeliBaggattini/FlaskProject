@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--fonts and icons-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  {% block title%}
+  {% endblock%}
+</head>
+
+<body>
+  <div id="app">
+    <v-app id="inspire">
+      <v-navigation-drawer class='indigo' v-model="drawer" app clipped>
+        <v-list>
+          <!--avatar-->
+          <v-list-item link href='{{url_for("userPage")}}'>
+            <v-container>
+              <v-row justify="center">
+                <v-avatar size="100">
+                  <img style="margin: auto;" src="{{image}}">
+                </v-avatar>
+              </v-row>
+              </br>
+              <v-row justify="center">
+                <p>{{user.username}}</p>
+              </v-row>
+            </v-container>
+            <!--end avatar-->
+          </v-list-item>
+          </br>
+          <v-divider></v-divider>
+          </br>
+          <v-list-item link href='{{url_for("index")}}'>
+            <v-list-item-action>
+              <v-icon>mdi-home</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Home</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item link href='{{url_for("newEvent")}}'>
+            <v-list-item-action>
+              <v-icon>mdi-calendar-multiselect</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Novo Evento</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          </br>
+          <v-divider></v-divider>
+          </br>
+          <v-list-item link href='{{url_for("userPage")}}'>
+            <v-list-item-action>
+              <v-icon>mdi-anchor</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Perfil</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+
+      <v-app-bar class='indigo' app clipped-left>
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+        <v-toolbar-title class='text-uppercase'>
+          <v-btn depressed href='/'>
+            <span class='font-weight-light'>anchor</span>
+            <v-icon color='grey'>mdi-anchor</v-icon>
+            <span>point</span>
+          </v-btn>
+        </v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn depressed color='indigo' class='white--text' href='{{url_for("logout")}}'>
+          <span>logout</span>
+          <v-icon right>mdi-exit-run</v-icon>
+        </v-btn>
+      </v-app-bar>
+
+      <v-content>
+
+        <v-container fluid>
+
+          {% block content%}
+          {% endblock%}
+
+        </v-container>
+
+      </v-content>
+
+      <v-footer app>
+        <span>&copy; 2020</span>
+      </v-footer>
+    </v-app>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+      props: {
+        source: String,
+      },
+
+      delimiters: ["<%", "%>"],
+
+      data: () => ({
+        drawer: null,
+        eventId: null,
+        titulo: '',
+        desc: '',
+        ed_titulo: '',
+        ed_desc: '',
+
+        //date picker
+        date: new Date().toISOString().substr(0, 10),
+        ed_date: null,
+        menu: false,
+
+        //time picker
+        time: null,
+        ed_time: null,
+        menuTime: false,
+
+        //rules
+        inputRules: [
+          val => !!val || 'Campo Obrigatório',
+          val => (val && val.length >= 3) || 'Mínimo 3 caracteres',
+        ],
+
+        //time rules
+        timeRules: [
+          val => !!val || 'Campo Obrigatório',
+        ],
+
+        //date rules
+        dateRules: [
+          val => !!val || 'Campo Obrigatório',
+        ],
+
+        //validation rules
+        usernameRules: [
+          val => !!val || 'Campo Obrigatório',
+          val => (val && val.length >= 8) || 'Mínimo 8 caracteres',
+        ],
+        emailRules: [
+          val => !!val || 'Campo Obrigatório',
+          val => (val && val.length >= 8) || 'Mínimo 8 caracteres',
+        ],
+
+        //test list events
+        panel: [],
+        dialog: false,
+
+        //user data
+        username: null,
+        email: null,
+
+        //file upload
+        selectedFile: null,
+
+      }),
+
+      mounted() {
+        if (document.getElementById('user') != null) {
+          this.username = document.getElementById('user').textContent;
+          this.email = document.getElementById('email').textContent;
+        }
+        if (document.getElementById('id') != null) {
+          this.eventId = document.getElementById('id').textContent;
+          this.ed_titulo = document.getElementById('title').textContent;
+          this.ed_desc = document.getElementById('description').textContent;
+          console.log(new Date(document.getElementById('dateTime').textContent).toString());
+          this.ed_date = new Date(document.getElementById('dateTime').textContent).toISOString().substr(0, 10);
+          this.ed_time = new Date(document.getElementById('dateTime').textContent).toString().substr(16, 5);
+        }
+      },
+
+      methods: {
+        submitEvent() {
+          //console.log(this.titulo, this.desc, this.date + " " + this.time);
+
+          var eventData = {
+            title: this.titulo,
+            description: this.desc,
+            date: this.date + " " + this.time,
+          }
+
+          if (this.$refs.newEvent.validate()) {
+            $.ajax({
+              url: "/create_event",
+              type: "POST",
+              contentType: "application/json",
+              data: JSON.stringify(eventData),
+              success: function (data) {
+                console.log('success');
+                if (data.done) {
+                  alert("evento criado");
+                } else {
+                  alert("Erro na criação do evento");
+                }
+              },
+            })
+            this.$refs.newEvent.reset();
+          }
+        },
+
+        updateEvent() {
+          //console.log(this.eventId, this.ed_titulo, this.ed_desc, this.ed_date + " " + this.ed_time);
+
+          var eventData = {
+            id: this.eventId,
+            title: this.ed_titulo,
+            description: this.ed_desc,
+            date: this.ed_date + " " + this.ed_time,
+          }
+
+          if (this.$refs.newEvent.validate()) {
+            $.ajax({
+              url: "/update_event",
+              type: "POST",
+              contentType: "application/json",
+              data: JSON.stringify(eventData),
+              success: function (data) {
+                console.log('success')
+                if (data.redirect) {
+                  window.location.href = data.redirect;
+                } else {
+                  alert("Erro ao atualizar o evento");
+                }
+              },
+            })
+            this.$refs.newEvent.reset();
+          }
+        },
+
+        updateInfo() {
+
+          var eventData = {
+            username: this.username,
+            email: this.email,
+            image: null,
+          }
+
+          if (document.getElementById("canvas").src != null) {
+            eventData.image = document.getElementById("canvas").src
+          }
+
+          if (this.$refs.userData.validate()) {
+            $.ajax({
+              url: "/update_user",
+              type: "POST",
+              contentType: "application/json",
+              data: JSON.stringify(eventData),
+              success: function (data) {
+                console.log('success')
+                if (data.redirect) {
+                  window.location.href = data.redirect;
+                } else {
+                  alert("Erro na atualização do perfil");
+                }
+              },
+            })
+          }
+        },
+
+        onFileSelected(event) {
+
+          if (typeof event !== 'undefined') {
+
+            var FR = new FileReader();
+
+            FR.addEventListener("load", function (e) {
+              document.getElementById("canvas").src = e.target.result;
+            });
+
+            FR.readAsDataURL(event);
+          }
+        }
+
+
+      },
+
+      created() {
+        this.$vuetify.theme.dark = true
+      },
+    })
+  </script>
+</body>
+
+</html>

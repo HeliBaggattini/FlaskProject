@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{%block title%}
+<title>Novo Evento</title>
+{%endblock title%}
+{%block content%}
+<h1 class="font-weight-thin text--secondary">Novo Evento</h1>
+</br>
+<v-row align='center' justify='center'>
+  <v-col sm='12' md='8'>
+    <v-card rised>
+      <v-toolbar color='indigo'>
+        <v-spacer></v-spacer>
+        <v-toolbar-title>Novo Evento</v-toolbar-title>
+      </v-toolbar>
+      <v-card-text>
+        <v-form ref='newEvent'>
+          <v-text-field v-model='titulo' label='título' placeholder='nome do evento' type='text' :rules='inputRules'
+            outlined>
+          </v-text-field>
+          <v-textarea v-model='desc' label='descrição' placeholder='descrição do evento' type='text' :rules='inputRules'
+            outlined>
+          </v-textarea>
+
+          <!--date picker-->
+          <v-menu ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="date"
+            transition="scale-transition" offset-y min-width="290px">
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field v-model="date" label="Data do evento" prepend-icon="mdi-calendar-outline" readonly
+                v-bind="attrs" v-on="on" :rules='dateRules' outlined></v-text-field>
+            </template>
+            <v-date-picker v-model="date" no-title scrollable>
+              <v-spacer></v-spacer>
+              <v-btn color="indigo" @click="menu = false">Cancel</v-btn>
+              <v-btn color="indigo" @click="$refs.menu.save(date)">OK</v-btn>
+            </v-date-picker>
+          </v-menu>
+
+          <!--time picker-->
+          <v-menu ref="menuTime" v-model="menuTime" :close-on-content-click="false" :nudge-right="40"
+            :return-value.sync="time" transition="scale-transition" offset-y max-width="290px" min-width="290px">
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field v-model="time" label="Hora do evento" prepend-icon="mdi-clock-outline" readonly
+                v-bind="attrs" v-on="on" :rules='timeRules' outlined></v-text-field>
+            </template>
+            <v-time-picker v-if="menuTime" v-model="time" format="24hr" full-width
+              @click:minute="$refs.menuTime.save(time)"></v-time-picker>
+          </v-menu>
+
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color='indigo' @click='submitEvent'>Salvar</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-col>
+</v-row>
+{%endblock content%}

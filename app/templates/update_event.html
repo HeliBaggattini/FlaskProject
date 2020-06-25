@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{%block title%}
+<title>Editar Evento</title>
+{%endblock title%}
+{%block content%}
+<h1 class="font-weight-thin text--secondary">Editar Evento</h1>
+</br>
+<v-row align='center' justify='center'>
+  <v-col sm='12' md='8'>
+    <v-card rised>
+      <v-toolbar color='indigo'>
+        <v-spacer></v-spacer>
+        <v-toolbar-title>Editar Evento</v-toolbar-title>
+      </v-toolbar>
+      <v-card-text>
+
+        <h1 id='id' style="display:none">{{event.id}}</h1>
+        <h1 id='title' style="display:none">{{event.title}}</h1>
+        <h1 id='description' style="display:none">{{event.description}}</h1>
+        <h1 id='dateTime' style="display:none">{{event.date}}</h1>
+
+        <v-form ref='newEvent'>
+          <v-text-field v-model='ed_titulo' label='título' placeholder='nome do evento' type='text' :rules='inputRules'
+            outlined>
+          </v-text-field>
+          <v-textarea v-model='ed_desc' label='descrição' placeholder='descrição do evento' type='text' :rules='inputRules'
+            outlined>
+          </v-textarea>
+
+          <!--date picker-->
+          <v-menu ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="ed_date"
+            transition="scale-transition" offset-y min-width="290px">
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field v-model="ed_date" label="Data do evento" prepend-icon="mdi-calendar-outline" readonly
+                v-bind="attrs" v-on="on" :rules='dateRules' outlined></v-text-field>
+            </template>
+            <v-date-picker v-model="ed_date" no-title scrollable>
+              <v-spacer></v-spacer>
+              <v-btn color="indigo" @click="menu = false">Cancel</v-btn>
+              <v-btn color="indigo" @click="$refs.menu.save(ed_date)">OK</v-btn>
+            </v-date-picker>
+          </v-menu>
+
+          <!--time picker-->
+          <v-menu ref="menuTime" v-model="menuTime" :close-on-content-click="false" :nudge-right="40"
+            :return-value.sync="ed_time" transition="scale-transition" offset-y max-width="290px" min-width="290px">
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field v-model="ed_time" label="Hora do evento" prepend-icon="mdi-clock-outline" readonly
+                v-bind="attrs" v-on="on" :rules='timeRules' outlined></v-text-field>
+            </template>
+            <v-time-picker v-if="menuTime" v-model="ed_time" format="24hr" full-width
+              @click:minute="$refs.menuTime.save(ed_time)"></v-time-picker>
+          </v-menu>
+
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color='indigo' @click='updateEvent'>Salvar</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-col>
+</v-row>
+{%endblock content%}

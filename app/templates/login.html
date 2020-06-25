@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--fonts and icons-->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    {% block title%}
+    <title>Login</title>
+    {% endblock%}
+</head>
+
+<body>
+    <div id="app">
+        <v-app id="inspire">
+            <v-container class='fill-height' fluid>
+                <v-row align='center' justify='center'>
+                    <v-col sm='12' md='6'>
+                        <v-card rised elevation='24'>
+                            <v-toolbar color='indigo'>
+                                <v-spacer></v-spacer>
+                                <v-toolbar-title>Login</v-toolbar-title>
+                                <v-spacer></v-spacer>
+                            </v-toolbar>
+                            <v-card-text>
+                                <p class='text-center'>
+                                    <v-avatar color="indigo" size='100'>
+                                        <v-icon size='80' light>mdi-guy-fawkes-mask</v-icon>
+                                    </v-avatar>
+                                </p>
+                                <v-form ref='login'>
+                                    <v-text-field v-model='user_mail' label='email' :rules='rules_login'
+                                        placeholder='example@email.com' type='text' prepend-icon='mdi-at' outlined>
+                                    </v-text-field>
+                                    <v-text-field v-model='user_pass' label='password' :rules='rules_pass'
+                                        placeholder='password' type='password' prepend-icon='mdi-lock-outline' outlined>
+                                    </v-text-field>
+                                </v-form>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn x-large color='indigo' @click='submitLogin'>login</v-btn>
+                                <v-spacer></v-spacer>
+                            </v-card-actions>
+                            </br>
+                            <p class='text-center'>Não possui conta? crie a sua clicando
+                                <a href='/register'>aqui</a>
+                            </p>
+                            </br>
+                        </v-card>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </v-app>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify(),
+            props: {
+                source: String,
+            },
+
+            delimiters: ["<%", "%>"],
+
+            data: () => ({
+                user_mail: '',
+                user_pass: '',
+
+                rules_login: [
+                    val => !!val || 'Insira seu email',
+                ],
+
+                rules_pass: [
+                    val => !!val || 'Insira sua senha',
+                ],
+            }),
+
+            methods: {
+                submitLogin() {
+                    //console.log(this.user_mail, this.user_pass);
+
+                    var loginData = {
+                        mail: this.user_mail,
+                        pass: this.user_pass,
+                    }
+                    if (this.$refs.login.validate()) {
+                        $.ajax({
+                            url: "/validate",
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify(loginData),
+                            success: function (data) {
+                                if (data.redirect) {
+                                    window.location.href = data.redirect;
+                                }
+                                if (data.err) {
+                                    alert("usuário ou senha inválido");
+                                }
+                            },
+                        })
+                    }
+                },
+            },
+
+            created() {
+                this.$vuetify.theme.dark = true
+            },
+        })
+    </script>
+</body>
+
+</html>

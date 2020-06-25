@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{%block title%}
+<title>Welcome!</title>
+{%endblock title%}
+{%block content%}
+<h1 class="font-weight-thin text--secondary">Welcome home</h1>
+</br>
+<v-row align='center' justify='center'>
+  <v-col sm='12' md='8'>
+    <v-card rised>
+      <v-toolbar color='indigo'>
+        <v-spacer></v-spacer>
+        <v-toolbar-title>Calendário</v-toolbar-title>
+      </v-toolbar>
+      <v-card-text>
+        {% if events %}
+        <v-expansion-panels v-model="panel" popout flat accordion>
+          {%for item in events%}
+          <!--event list-->
+          <v-expansion-panel>
+            <v-expansion-panel-header>
+              <h1 class="font-weight-thin">{{item.title}}</h1>
+              <v-spacer></v-spacer>
+              {{item.date.strftime('%d/%m/%Y %H:%M')}}
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-card flat>
+                <v-card-title>
+                  Descrição:
+                </v-card-title>
+                <v-card-text>
+                  <h1 class="font-weight-thin">
+                    {{item.description}}
+                  </h1>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+
+                  <v-btn color="indigo" href="{{url_for('redirectUpdate', id = item.id)}}">Editar</v-btn>
+                  <v-btn color="indigo" href="{{url_for('deleteEvent', id = item.id)}}">Excluir</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+          {% endfor %}
+        </v-expansion-panels>
+        {% else %}
+        <h1 class="font-weight-thin text--secondary">Não há Eventos Cadastrados</h1>
+        {% endif %}
+
+      </v-card-text>
+    </v-card>
+  </v-col>
+</v-row>
+{%endblock content%}

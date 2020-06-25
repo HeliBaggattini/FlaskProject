@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{%block title%}
+<title>Perfil</title>
+{%endblock title%}
+{%block content%}
+<h1 class="font-weight-thin text--secondary">Perfil</h1>
+</br>
+<h1 id='base64' style="display: none"></h1>
+<v-row align='center' justify='center'>
+  <v-col sm='12' md='8'>
+    <v-card rised>
+      <v-toolbar color='indigo'>
+        <v-spacer></v-spacer>
+        <v-toolbar-title>Perfil</v-toolbar-title>
+      </v-toolbar>
+      <v-card-text>
+        <v-row justify='center'>
+          <v-avatar size="200">
+            <img id="canvas" style="margin: auto;"
+              src="{{image}}"
+            >
+            <!--<img  style="display: none;">-->
+          </v-avatar>
+        </v-row>
+        </br>
+        <h1 id='user' style="display:none">{{user.username}}</h1>
+        <h1 id='email' style="display:none">{{user.email}}</h1>
+        <v-form ref='userData'>
+          <v-text-field v-model='username' label='usuário' placeholder='username' type='text'
+            prepend-icon='mdi-account-circle-outline' :rules='usernameRules' outlined>
+          </v-text-field>
+          <v-text-field v-model='email' label='email' placeholder='example@email.com' type='text' prepend-icon='mdi-at'
+            :rules='emailRules' outlined>
+          </v-text-field>
+          <v-row justify='center'>
+            <v-col cols='8'>
+              <!--v-model="selectedFile"-->
+              <v-file-input accept="image/png, image/jpeg" label="Avatar" @change="onFileSelected" placeholder="Escolha o seu avatar"
+                prepend-icon="mdi-camera" outlined>
+              </v-file-input>
+            </v-col>
+          </v-row>
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color='indigo' @click='updateInfo'>Salvar</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-col>
+</v-row>
+{%endblock content%}

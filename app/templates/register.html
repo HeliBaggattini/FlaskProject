@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--fonts and icons-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  {% block title%}
+  <title>Register</title>
+  {% endblock%}
+</head>
+
+<body>
+    <div id="app">
+        <v-app id="inspire">
+            <v-container class='fill-height' fluid>
+                <v-row align='center' justify='center'>
+                    <v-col sm='12' md= '6'>
+                        <v-card rised elevation='24'>
+                            <v-toolbar color='indigo'>
+                                <v-spacer></v-spacer>
+                                <v-toolbar-title>Crie sua Conta</v-toolbar-title>
+                                <v-spacer></v-spacer>
+                            </v-toolbar>
+                            <v-card-text>
+                                <p class='text-center'>
+                                    <v-avatar color="indigo" size='100'>
+                                        <v-icon size='80' light>mdi-guy-fawkes-mask</v-icon>
+                                    </v-avatar>
+                                </p>
+                                <v-form ref='uReg'>
+                                    <v-text-field 
+                                    v-model='username'
+                                    label='usuário' 
+                                    placeholder='username' 
+                                    type='text'
+                                    prepend-icon='mdi-account-circle-outline'
+                                    :rules='usernameRules'
+                                    outlined
+                                    >
+                                    </v-text-field>
+                                    <v-text-field
+                                    v-model='email' 
+                                    label='email' 
+                                    placeholder='example@email.com' 
+                                    type='text'
+                                    prepend-icon='mdi-at'
+                                    :rules='emailRules'
+                                    outlined
+                                    >
+                                    </v-text-field>
+                                    <v-text-field
+                                    id='passField' 
+                                    v-model='pass'
+                                    label='senha' 
+                                    placeholder='password' 
+                                    type='password'
+                                    prepend-icon='mdi-lock-outline'
+                                    :rules='passRules'
+                                    outlined
+                                    >
+                                    </v-text-field>
+                                    <v-text-field 
+                                    v-model='pass_conf'
+                                    label='confirme sua senha' 
+                                    placeholder='password' 
+                                    type='password'
+                                    prepend-icon='mdi-lock-outline'
+                                    :rules='passConfRules'
+                                    outlined
+                                    >
+                                    </v-text-field>
+                                </v-form>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn x-large color='indigo' @click='submit'>Criar Conta</v-btn>
+                                <v-spacer></v-spacer>
+                            </v-card-actions> 
+                            </br>
+                        </v-card>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </v-app>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+    new Vue({
+        el: '#app',
+        vuetify: new Vuetify(),
+        props: {
+        source: String,
+        },
+
+        delimiters: ["<%","%>"],
+
+        data: () => ({
+            username: '',
+            email: '',
+            pass: '',
+            pass_conf: '',
+
+            //validation rules
+            usernameRules: [
+                val => !!val || 'Campo Obrigatório',   
+                val => (val && val.length >= 8) || 'Mínimo 8 caracteres',
+            ],
+            emailRules: [
+                val => !!val || 'Campo Obrigatório',
+                val => (val && val.length >= 8) || 'Mínimo 8 caracteres',
+            ],
+            passRules: [
+                val => !!val || 'Campo Obrigatório',
+            ],
+            passConfRules: [
+                val => !!val || 'Campo Obrigatório',
+                val => (val && val === document.getElementById('passField').value) || 'As senhas não conferem',
+            ],
+        }),
+
+        methods:{
+            submit() {
+                console.log(this.username, this.email, this.pass, this.pass_conf);
+
+                var loginData = {
+                    username: this.username,
+                    email: this.email,
+                    pass: this.pass,
+                    pass_conf: this.pass_conf,
+                }
+
+                if(this.$refs.uReg.validate()){
+                    $.ajax({
+                        url: "/account_reg",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(loginData),
+                        success: function(data){
+                            console.log('success')
+                            if(data.done){
+                                alert("Usuário criado");
+                                window.location.href = "/index"
+                            }else{
+                                alert("Erro na criação do Usuário");
+                            }
+                        },
+                    })
+                    this.$refs.uReg.reset()
+                }
+            },
+        },
+
+        created() {
+        this.$vuetify.theme.dark = true
+        },
+    })
+    </script>
+</body>
+
+</html>
