@@ -15,7 +15,7 @@ lazy-object-proxy==1.4.3
 MarkupSafe==1.1.1
 mccabe==0.6.1
 mysql-connector-python==8.0.20
-numpy==1.18.5
+numpy==1.22.0
 opencv-python==4.2.0.34
 protobuf==3.11.3
 pycparser==2.20
